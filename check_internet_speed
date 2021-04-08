@@ -9,7 +9,7 @@ downc=$2
 upw=$3
 upc=$4
 
-TMP=".speedtest.$SERVER.$RANDOM"
+TMP=".speedtest.$RANDOM"
 
 if [  -z $4 ]; then
  echo "UNOKNWN - Please pass all 4 paramateres $0 <download_warn> <download_crit> <upload_warn> <upload_crit>"
@@ -31,7 +31,7 @@ P=$(grep Latency $TMP |awk '{ print $(NF -4) }')
 D=$(grep Download $TMP |awk '{ print $(NF -5)}' |awk -F"." '{print $1}' )
 U=$(grep Upload $TMP |awk '{ print $(NF -5) }'  |awk -F"." '{print $1}' )
 
-MSG="Latency $P ms Download $D Mbit/s Upload $U Mbit/s |Download=$D;Upload=$U"
+MSG="Latency $P ms Download $D Mbit/s Upload $U Mbit/s |'Download'=$D 'Upload'=$U 'Latency=$P'"
 rm -f $TMP
 
 if [ $D -lt $downc ] || [ $U -lt $upc ]; then
