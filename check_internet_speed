@@ -35,24 +35,20 @@ fi
 
 PWD=$(pwd)
 PWD="/usr/lib/nagios/plugins"
-SCRIPT="${PWD}/speedtest-cli"
+SCRIPT="/usr/bin//speedtest"
 if [ -f $SCRIPT ]; then
- CMD="$SCRIPT --server $SERVERID --timeout $TOUT --simple  > $TMP  2>&1"
-elif [[ $(command -v pyspeedtest >/dev/null 2>&1) ]]; then
- SCRIPT="pyspeedtest"
- CMD="$SCRIPT -s $SERVER -r $RUNS > $TMP  2>&1"
+ CMD="$SCRIPT > $TMP  2>&1"
 else
- echo "UNKONW - could not find requirements: speedtest-cli or pyspeedtest "
- echo "Download speedtest-cli https://github.com/sivel/speedtest-cli"
- echo "Download: pyspeedtest  https://github.com/fopina/pyspeedtest"
+ echo "UNKONW - could not find requirements: speedtest"
+ echo "Download speedtest-cli from https://www.speedtest.net/apps/cli"
  exit 3
 fi
 
 #echo $CMD
 R=$(eval $CMD)
-P=$(grep Ping $TMP |awk '{ print $(NF -1) }')
-D=$(grep Download $TMP |awk '{ print $(NF -1)}' |awk -F"." '{print $1}' )
-U=$(grep Upload $TMP |awk '{ print $(NF -1) }'  |awk -F"." '{print $1}' )
+P=$(grep Latency $TMP |awk '{ print $(NF -4) }')
+D=$(grep Download $TMP |awk '{ print $(NF -5)}' |awk -F"." '{print $1}' )
+U=$(grep Upload $TMP |awk '{ print $(NF -5) }'  |awk -F"." '{print $1}' )
 
 MSG="TestServer: $SERVER Ping $P ms Download $D Mbit/s Upload $U Mbit/s |Download=$D;Upload=$U"
 rm -f $TMP
