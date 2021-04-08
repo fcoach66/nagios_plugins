@@ -1,30 +1,13 @@
 #!/bin/bash
-# Uses pyspeedtest or speedtest-cli to test internet speed and format for nagios
+# Uses speedtest cli from Oookla to test internet speed and format for nagios
 # Felipe Ferreira 08/2016
-# Version 2.0 - allows use of two different tools now
+# @fcoach66 04/2021
+# Version 3.0
 
 downw=$1
 downc=$2
 upw=$3
 upc=$4
-
-## SOME OF THE SERVERS I USE
-#id="3837" sp1.wind.it:8080 DESC="Rome Italia Wind "
-#id="6512" speedtest.tecnoadsl.it:8080 DESC="Telecom Italia S.p.A. (Perugia, Italy) [23.00 km]"
-#id="5470" speedtestpg1.telecomitalia.it:8080
-#id="9636" speedtestfi1.telecomitalia.it:8080 DESC="Telecom Italia S.p.A. (Florence, Italy) [99.02 km]"
-#id="3676" speedtest-rma.clouditalia.com:8080 DESC="Clouditalia S p A (Rome, Italy) [142.40 km]"
-# There is a FULL list of servers here http://www.speedtest.net/speedtest-servers.php
-
-#TIP: Too make speedtest-cli work without opening outbound to any I downloaded set to local web folder 2 xml files
-# ://<MYSERVER>/speedtest-servers-static.xml
-# ://centreon/c/speedtest-config.xml
-###########EDIT HERE##############
-SERVERID=3837
-SERVER="sp1.wind.it"
-TOUT=50             # only for speedtest-cli
-RUNS=8              # only for pyspeedtest
-
 
 TMP=".speedtest.$SERVER.$RANDOM"
 
@@ -33,14 +16,12 @@ if [  -z $4 ]; then
  exit 3
 fi
 
-PWD=$(pwd)
-PWD="/usr/lib/nagios/plugins"
 SCRIPT="/usr/bin//speedtest"
 if [ -f $SCRIPT ]; then
  CMD="$SCRIPT > $TMP  2>&1"
 else
  echo "UNKONW - could not find requirements: speedtest"
- echo "Download speedtest-cli from https://www.speedtest.net/apps/cli"
+ echo "Download speedtest from https://www.speedtest.net/apps/cli"
  exit 3
 fi
 
@@ -50,7 +31,7 @@ P=$(grep Latency $TMP |awk '{ print $(NF -4) }')
 D=$(grep Download $TMP |awk '{ print $(NF -5)}' |awk -F"." '{print $1}' )
 U=$(grep Upload $TMP |awk '{ print $(NF -5) }'  |awk -F"." '{print $1}' )
 
-MSG="TestServer: $SERVER Ping $P ms Download $D Mbit/s Upload $U Mbit/s |Download=$D;Upload=$U"
+MSG="Latency $P ms Download $D Mbit/s Upload $U Mbit/s |Download=$D;Upload=$U"
 rm -f $TMP
 
 if [ $D -lt $downc ] || [ $U -lt $upc ]; then
