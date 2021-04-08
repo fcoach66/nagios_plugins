@@ -31,7 +31,7 @@ P=$(grep Latency $TMP |awk '{ print $(NF -4) }')
 D=$(grep Download $TMP |awk '{ print $(NF -5)}' |awk -F"." '{print $1}' )
 U=$(grep Upload $TMP |awk '{ print $(NF -5) }'  |awk -F"." '{print $1}' )
 
-MSG="Latency $P ms Download $D Mbit/s Upload $U Mbit/s |'Download'=$D 'Upload'=$U 'Latency=$P'"
+MSG="Latency $P ms Download $D Mbit/s Upload $U Mbit/s |'Download'=$D 'Upload'=$U 'Latency'=$P"
 rm -f $TMP
 
 if [ $D -lt $downc ] || [ $U -lt $upc ]; then
